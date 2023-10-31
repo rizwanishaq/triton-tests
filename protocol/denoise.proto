@@ -1,0 +1,41 @@
+// The syntax for this file is proto3
+syntax = "proto3";
+
+package utopia.loquista.noisecancelation;
+
+
+enum InputFrequency {
+    FREQ_16KHz = 0;
+    FREQ_48KHz = 1;
+}
+
+message RequestConfiguration {
+    bool simple = 1;
+    bool aggressive = 2;
+    InputFrequency frequency = 3;
+}
+
+message NoiseCancelationRequest {
+    bytes audio_input = 1;
+    RequestConfiguration config = 2;
+    int64 timestamp = 3;
+}
+
+message AudioClassifier {
+    float speech = 1;
+    float noise = 2;
+    float music = 3;
+}
+
+message NoiseCancelationResponse {
+    bytes audio_output = 1;
+    AudioClassifier audio_classification = 2;
+    int64 timestamp = 3;
+}
+
+message Empty {}
+
+service Denoise {
+    rpc NoiseCancelation(stream NoiseCancelationRequest) returns (stream NoiseCancelationResponse) {}
+    rpc GetServerStatus(Empty) returns (Empty) {}
+}
